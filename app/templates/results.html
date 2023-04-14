@@ -1,0 +1,126 @@
+<div class="container">
+    <hr>
+    <h1>Search for Articles</h1>
+    <hr>
+
+    <form action="http://localhost:5000/search/top_headline_count" method="POST">
+        <h2> Fetch Top Headlines </h2>
+        <div class="form-group">
+            <label for="Title">Count</label>
+            <input type="number" name="count" min = "1" oninput="validity.valid||(value='');" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+
+    <form action="http://localhost:5000/search/title" method="POST">
+        <h2> Search by Title </h2>
+        <div class="form-group">
+            <label for="Title">Title</label>
+            <input type="text" name="title"  required>
+        </div>
+        <button  type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+    <form action="http://localhost:5000/search/keywords" method="POST">
+        <h2> Search by Keywords </h2>
+        <div class="form-group">
+            <label for="Keywords">Keywords</label>
+            <input type="text" name="keywords"  required>
+        </div>
+        <button  type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+    <form action="http://localhost:5000/search/source" method="POST">
+        <h2> Search by Source </h2>
+        <div class="form-group">
+            <select id="source" name="source">
+                
+            </select>
+            <input type="submit">
+        </div>
+
+    </form>
+       
+</div>
+
+
+<div class="container">
+    <hr>
+    <h1>List of Articles</h1>
+    <hr>
+    <div>
+        <div class="row" id="articles">
+
+           
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+const load_results = () =>  {
+    const xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "http://localhost:5000/results", false);
+    xhttp.send();
+    const articles = JSON.parse(xhttp.responseText).articles;
+
+    for (let article of articles) {
+
+        document.getElementById('articles').innerHTML += `
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">`
+            
+        if (article.title != null)
+            document.getElementById('articles').innerHTML += `<h5 class="card-title">${article.title}</h5>`
+                        
+        if (article.author != null)
+        document.getElementById('articles').innerHTML += `<h6 class="card-subtitle mb-2 text-muted">${article.author}</h6>`
+
+        if(article.imageurl != null)
+            document.getElementById('articles').innerHTML += `<img src="${article.imageurl}" alt="${article.imageurl}" style=
+            width:200px;
+            height:auto;>`
+
+        if(article.description != null)
+            document.getElementById('articles').innerHTML += `<p> Description: ${article.description} </p>`
+        
+        if(article.content != null)
+            document.getElementById('articles').innerHTML += `<p> Content: ${article.content} </p>`
+
+        if(article.source != null)
+            document.getElementById('articles').innerHTML += `<div>Publisher: ${article.source}</div>`
+
+        if(article.url != null)
+            document.getElementById('articles').innerHTML += `<a href="${article.url}">${article.url}</a>`
+        
+        document.getElementById('articles').innerHTML += ` 
+                    <hr>
+                </div>
+            </div>
+        </div>`
+
+    }  
+}
+load_results()
+</script>
+
+
+<script>
+
+    const get_possible_sources = () =>  {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://localhost:5000/sources", false);
+        xhttp.send();
+        const sources = JSON.parse(xhttp.responseText).sources;
+        for (let source of sources) {
+            const x = `<option value="${source.id}">${source.name}</option>`;
+            document.getElementById('source').innerHTML = document.getElementById('source').innerHTML + x;
+        }  
+    }
+    get_possible_sources()
+</script>

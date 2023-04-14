@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.news &#8212; News API  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.news</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+
+
+<div class="viewcode-block" id="get_attribs_from_articles"><a class="viewcode-back" href="../../src.html#src.news.get_attribs_from_articles">[docs]</a><span class="k">def</span> <span class="nf">get_attribs_from_articles</span><span class="p">(</span><span class="n">article_list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function used internally by NewsSource class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">article_list</span><span class="p">:</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="n">article</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span> <span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;imageurl&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;urlToImage&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;published&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;publishedAt&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;content&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+        <span class="p">})</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;null&#39;</span><span class="p">):</span>
+                <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+     
+<div class="viewcode-block" id="get_attribs_from_sources"><a class="viewcode-back" href="../../src.html#src.news.get_attribs_from_sources">[docs]</a><span class="k">def</span> <span class="nf">get_attribs_from_sources</span><span class="p">(</span><span class="n">source_list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function used internally by NewsSource class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">source_list</span><span class="p">:</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span> <span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;category&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;language&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;language&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;country&#39;</span> <span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">)</span>
+        <span class="p">})</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;null&#39;</span><span class="p">):</span>
+                <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="NewsSource"><a class="viewcode-back" href="../../src.html#src.news.NewsSource">[docs]</a><span class="k">class</span> <span class="nc">NewsSource</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing a newsource&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param key: NEWS API api key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="NewsSource.changeKey"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.changeKey">[docs]</a>    <span class="k">def</span> <span class="nf">changeKey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newkey</span> <span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param key: NEWS API api key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span> <span class="o">=</span> <span class="n">newkey</span></div>
+
+<div class="viewcode-block" id="NewsSource.getKey"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.getKey">[docs]</a>    <span class="k">def</span> <span class="nf">getKey</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return (str): NEWS API api key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span> </div>
+    
+    
+<div class="viewcode-block" id="NewsSource.searchByKeyWords"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.searchByKeyWords">[docs]</a>    <span class="k">def</span> <span class="nf">searchByKeyWords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keywords</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Searches for articles with a string of comma separated list of keywords</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">                keywords (str): comma separated list of keywords to search</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                results (dict): Dictionary containing the result of the search query</span>
+<span class="sd">                    self.topHeadlineCache[&#39;status&#39;] (str): &#39;GOOD&#39; if the search was completed successfully, &#39;BAD&#39; if not</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;count&#39;] (int): number of results</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;articles&#39;] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</span>
+
+<span class="sd">                        &#39;title&#39; (str): Title of the article</span>
+
+<span class="sd">                        &#39;author&#39; (str): Author(s) of the article</span>
+
+<span class="sd">                        &#39;source&#39; (str): Source of Article (ex: &#39;BBC News&#39;)</span>
+
+<span class="sd">                        &#39;description&#39; (str): Short description of the article </span>
+
+<span class="sd">                        &#39;url&#39; (str): Link to the article</span>
+
+<span class="sd">                        &#39;imageurl&#39; (str): Link to the article&#39;s image</span>
+
+<span class="sd">                        &#39;published&#39; (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</span>
+<span class="sd">                        </span>
+<span class="sd">                        &#39;content&#39; (str): First 200 characters max of the article&#39;s content </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span>  <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://newsapi.org/v2/everything?q=&quot;</span><span class="o">+</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;&amp;pageSize=100&amp;apiKey=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">get_attribs_from_articles</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;articles&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#there was an error at some point</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
+        
+
+<div class="viewcode-block" id="NewsSource.getArticlesFromSource"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.getArticlesFromSource">[docs]</a>    <span class="k">def</span> <span class="nf">getArticlesFromSource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span> <span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Searches for articles from a specific news source</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">                source_id (str): id of the news source to search from</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                results (dict): Dictionary containing the result of the search query</span>
+<span class="sd">                    self.topHeadlineCache[&#39;status&#39;] (str): &#39;GOOD&#39; if the search was completed successfully, &#39;BAD&#39; if not</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;count&#39;] (int): number of results</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;articles&#39;] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</span>
+
+<span class="sd">                        &#39;title&#39; (str): Title of the article</span>
+
+<span class="sd">                        &#39;author&#39; (str): Author(s) of the article</span>
+
+<span class="sd">                        &#39;source&#39; (str): Source of Article (ex: &#39;BBC News&#39;)</span>
+
+<span class="sd">                        &#39;description&#39; (str): Short description of the article </span>
+
+<span class="sd">                        &#39;url&#39; (str): Link to the article</span>
+
+<span class="sd">                        &#39;imageurl&#39; (str): Link to the article&#39;s image</span>
+
+<span class="sd">                        &#39;published&#39; (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</span>
+<span class="sd">                        </span>
+<span class="sd">                        &#39;content&#39; (str): First 200 characters max of the article&#39;s content </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span>  <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://newsapi.org/v2/everything?sources=&quot;</span><span class="o">+</span> <span class="n">source_id</span><span class="o">+</span><span class="s2">&quot;&amp;pageSize=100&amp;apiKey=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">get_attribs_from_articles</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;articles&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#there was an error at some point</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
+
+    
+<div class="viewcode-block" id="NewsSource.getNewsSources"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.getNewsSources">[docs]</a>    <span class="k">def</span> <span class="nf">getNewsSources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">,</span> <span class="n">lang</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">country</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">clear_cache</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the possible news sources the NewsSource can pull from and stores them in a cache. </span>
+<span class="sd">        The cache is cleared if a new category, lang, or country is requested, or if &#39;clear_cache&#39; is true</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">                category (str): The category the news sources are. Use the empty string (&quot;&quot;) to get all categories. Possible Values: &#39;business&#39;, &#39;entertainment&#39;, &#39;general&#39;, &#39;health&#39;, &#39;science&#39;, &#39;sports&#39;, &#39;technology&#39;</span>
+<span class="sd">                lang (str): The language the news sources are in. Use the empty string (&quot;&quot;) to get all languages. Possible Values: &#39;ar&#39;, &#39;de&#39;, &#39;en&#39;, &#39;es&#39;, &#39;fr&#39;, &#39;he&#39;, &#39;it&#39;, &#39;nl&#39;, &#39;no&#39;, &#39;pt&#39;, &#39;ru&#39;, &#39;sv&#39;, &#39;ud&#39;, &#39;zh&#39;</span>
+<span class="sd">                country (str): The country the news source is from. Use the empty string (&quot;&quot;) to get all countries. Possible Values: &#39;ae&#39;, &#39;ar&#39;, &#39;at&#39;, &#39;au&#39;, &#39;be&#39;, &#39;bg&#39;, &#39;br&#39;, &#39;ca&#39;, &#39;ch&#39;, &#39;cn&#39;, &#39;co&#39;, &#39;cu&#39;, &#39;cz&#39;, &#39;de&#39;, &#39;eg&#39;, &#39;fr&#39;, &#39;gb&#39;, &#39;gr&#39;, &#39;hk&#39;, &#39;hu&#39;, &#39;id&#39;, &#39;ie&#39;, &#39;il&#39;, &#39;in&#39;, &#39;it&#39;, &#39;jp&#39;, &#39;kr&#39;, &#39;lt&#39;, &#39;lv&#39;, &#39;ma&#39;, &#39;mx&#39;, &#39;my&#39;, &#39;ng&#39;, &#39;nl&#39;, &#39;no&#39;, &#39;nz&#39;, &#39;ph&#39;, &#39;pl&#39;, &#39;pt&#39;, &#39;ro&#39;, &#39;rs&#39;, &#39;ru&#39;, &#39;sa&#39;, &#39;se&#39;, &#39;sg&#39;, &#39;si&#39;, &#39;sk&#39;, &#39;th&#39;, &#39;tr&#39;, &#39;tw&#39;, &#39;ua&#39;, &#39;us&#39;, &#39;ve&#39;, &#39;za&#39;</span>
+<span class="sd">                clear_cache (bool): When true, the cache will be cleared</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                results (dict): Dictionary containing the retrieved sources</span>
+<span class="sd">                    self.topHeadlineCache[&#39;status&#39;] (str): &#39;GOOD&#39; if the operation was completed successfully, &#39;BAD&#39; if not</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;count&#39;] (int): number of sources</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;articles&#39;] (list): list of sources. Each entry is a dictionary with the following keys:</span>
+
+<span class="sd">                        &#39;id&#39; (str): ID of the news source</span>
+
+<span class="sd">                        &#39;name&#39; (str): Name of the news source</span>
+
+<span class="sd">                        &#39;description&#39; (str): Short description of the news source</span>
+
+<span class="sd">                        &#39;url&#39; (str): Link to the news source</span>
+
+<span class="sd">                        &#39;category&#39; (str): Category of the news source</span>
+
+<span class="sd">                        &#39;language&#39; (str): Language of the news source</span>
+
+<span class="sd">                        &#39;country&#39; (str): Country of the news source</span>
+<span class="sd">                        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">category</span> <span class="ow">and</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">lang</span> <span class="ow">and</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">country</span> <span class="ow">and</span>
+            <span class="n">clear_cache</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sources&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]</span>
+
+        
+
+        <span class="n">search_param</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">category</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">search_param</span> <span class="o">+=</span> <span class="s1">&#39;category=&#39;</span><span class="o">+</span> <span class="n">category</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span>
+        <span class="k">if</span> <span class="n">lang</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">search_param</span> <span class="o">+=</span> <span class="s1">&#39;language=&#39;</span> <span class="o">+</span> <span class="n">lang</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">search_param</span> <span class="o">+=</span> <span class="s1">&#39;country=&#39;</span> <span class="o">+</span> <span class="n">country</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span>  <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://newsapi.org/v2/top-headlines/sources?&quot;</span><span class="o">+</span>  <span class="n">search_param</span> <span class="o">+</span> <span class="s2">&quot;apiKey=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">get_attribs_from_sources</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">category</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="p">[</span><span class="s1">&#39;lang&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lang</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newsSourceCache</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;sources&#39;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;sources&#39;</span> <span class="p">:</span> <span class="p">[]}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;sources&#39;</span> <span class="p">:</span> <span class="p">[]}</span></div>
+
+<div class="viewcode-block" id="NewsSource.searchByTitle"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.searchByTitle">[docs]</a>    <span class="k">def</span> <span class="nf">searchByTitle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Searches for articles with a specific title</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">                title (str): title to search for</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                results (dict): Dictionary containing the result of the search query</span>
+<span class="sd">                    self.topHeadlineCache[&#39;status&#39;] (str): &#39;GOOD&#39; if the search was completed successfully, &#39;BAD&#39; if not</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;count&#39;] (int): number of results</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;articles&#39;] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</span>
+
+<span class="sd">                        &#39;title&#39; (str): Title of the article</span>
+
+<span class="sd">                        &#39;author&#39; (str): Author(s) of the article</span>
+
+<span class="sd">                        &#39;source&#39; (str): Source of Article (ex: &#39;BBC News&#39;)</span>
+
+<span class="sd">                        &#39;description&#39; (str): Short description of the article </span>
+
+<span class="sd">                        &#39;url&#39; (str): Link to the article</span>
+
+<span class="sd">                        &#39;imageurl&#39; (str): Link to the article&#39;s image</span>
+
+<span class="sd">                        &#39;published&#39; (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</span>
+<span class="sd">                        </span>
+<span class="sd">                        &#39;content&#39; (str): First 200 characters max of the article&#39;s content</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span>  <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://newsapi.org/v2/everything?q=&quot;</span><span class="o">+</span> <span class="n">title</span><span class="o">+</span> <span class="s2">&quot;&amp;searchIn=title&amp;pageSize=100&amp;apiKey=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">get_attribs_from_articles</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;articles&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#there was an error at some point</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
+
+    
+<div class="viewcode-block" id="NewsSource.getNumberOfArticles"><a class="viewcode-back" href="../../src.html#src.news.NewsSource.getNumberOfArticles">[docs]</a>    <span class="k">def</span> <span class="nf">getNumberOfArticles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">recompute_cache</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a given amount of top headlines and stores them in a cache. </span>
+<span class="sd">        The cache is refilled when &#39;number&#39; is larger than the size of the current cache, or when &#39;recompute_cache&#39; is true.</span>
+<span class="sd">        In the case where &#39;status&#39; is &#39;BAD&#39;, all the articles which were successfully saved in cache will be returned.</span>
+
+
+<span class="sd">        Parameters:</span>
+<span class="sd">                number (int): amount of articles to return</span>
+<span class="sd">                recompute_cache (bool): when true, the cache will be emptied before the query is made</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">                self.topHeadlineCache (dict): Dictionary containing the result of the search query </span>
+<span class="sd">                    self.topHeadlineCache[&#39;status&#39;] (str): &#39;GOOD&#39; if the search was completed successfully, &#39;BAD&#39; if not</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;count&#39;] (int): number of results</span>
+
+<span class="sd">                    self.topHeadlineCache[&#39;articles&#39;] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</span>
+
+<span class="sd">                        &#39;title&#39; (str): Title of the article</span>
+
+<span class="sd">                        &#39;author&#39; (str): Author(s) of the article</span>
+
+<span class="sd">                        &#39;source&#39; (str): Source of Article (ex: &#39;BBC News&#39;)</span>
+
+<span class="sd">                        &#39;description&#39; (str): Short description of the article </span>
+
+<span class="sd">                        &#39;url&#39; (str): Link to the article</span>
+
+<span class="sd">                        &#39;imageurl&#39; (str): Link to the article&#39;s image</span>
+
+<span class="sd">                        &#39;published&#39; (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</span>
+
+<span class="sd">                        &#39;content&#39; (str): First 200 characters max of the article&#39;s content</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">recompute_cache</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1">#check if enough articles are in the cache</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">):</span>
+            <span class="k">return</span>  <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="n">number</span><span class="p">,</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">number</span><span class="p">]</span> <span class="p">}</span>
+        
+        <span class="c1">#if not, reload the entire cache with new articles</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">number</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span>  <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://newsapi.org/v2/top-headlines?country=us&amp;pageSize=100&amp;page=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="s2">&quot;&amp;apiKey=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">apikey</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ok&#39;</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">get_attribs_from_articles</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;articles&#39;</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1">#there was an error at some point</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span> <span class="o">=</span> <span class="n">results</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))]}</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span> <span class="o">=</span> <span class="n">results</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;BAD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))]}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;GOOD&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">number</span> <span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">)),</span> <span class="s1">&#39;articles&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="n">number</span> <span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topHeadlineCache</span><span class="p">))]}</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">News API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Giovanni Mascetti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

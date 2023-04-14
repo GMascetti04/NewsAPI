@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>src package &#8212; News API  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="src" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-src.news">
+<span id="src-news-module"></span><h2>src.news module<a class="headerlink" href="#module-src.news" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.news.NewsSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.news.</span></span><span class="sig-name descname"><span class="pre">NewsSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/news.html#NewsSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing a newsource</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.changeKey">
+<span class="sig-name descname"><span class="pre">changeKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newkey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/news.html#NewsSource.changeKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.changeKey" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – NEWS API api key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.getArticlesFromSource">
+<span class="sig-name descname"><span class="pre">getArticlesFromSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/news.html#NewsSource.getArticlesFromSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.getArticlesFromSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for articles from a specific news source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source_id</strong> (<em>str</em>) – id of the news source to search from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>Dictionary containing the result of the search query</dt><dd><p>self.topHeadlineCache[‘status’] (str): ‘GOOD’ if the search was completed successfully, ‘BAD’ if not</p>
+<p>self.topHeadlineCache[‘count’] (int): number of results</p>
+<p>self.topHeadlineCache[‘articles’] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</p>
+<blockquote>
+<div><p>’title’ (str): Title of the article</p>
+<p>’author’ (str): Author(s) of the article</p>
+<p>’source’ (str): Source of Article (ex: ‘BBC News’)</p>
+<p>’description’ (str): Short description of the article</p>
+<p>’url’ (str): Link to the article</p>
+<p>’imageurl’ (str): Link to the article’s image</p>
+<p>’published’ (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</p>
+<p>’content’ (str): First 200 characters max of the article’s content</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>results (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.getKey">
+<span class="sig-name descname"><span class="pre">getKey</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/news.html#NewsSource.getKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.getKey" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return (str)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NEWS API api key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.getNewsSources">
+<span class="sig-name descname"><span class="pre">getNewsSources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/news.html#NewsSource.getNewsSources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.getNewsSources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the possible news sources the NewsSource can pull from and stores them in a cache.
+The cache is cleared if a new category, lang, or country is requested, or if ‘clear_cache’ is true</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>category</strong> (<em>str</em>) – The category the news sources are. Use the empty string (“”) to get all categories. Possible Values: ‘business’, ‘entertainment’, ‘general’, ‘health’, ‘science’, ‘sports’, ‘technology’</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – The language the news sources are in. Use the empty string (“”) to get all languages. Possible Values: ‘ar’, ‘de’, ‘en’, ‘es’, ‘fr’, ‘he’, ‘it’, ‘nl’, ‘no’, ‘pt’, ‘ru’, ‘sv’, ‘ud’, ‘zh’</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – The country the news source is from. Use the empty string (“”) to get all countries. Possible Values: ‘ae’, ‘ar’, ‘at’, ‘au’, ‘be’, ‘bg’, ‘br’, ‘ca’, ‘ch’, ‘cn’, ‘co’, ‘cu’, ‘cz’, ‘de’, ‘eg’, ‘fr’, ‘gb’, ‘gr’, ‘hk’, ‘hu’, ‘id’, ‘ie’, ‘il’, ‘in’, ‘it’, ‘jp’, ‘kr’, ‘lt’, ‘lv’, ‘ma’, ‘mx’, ‘my’, ‘ng’, ‘nl’, ‘no’, ‘nz’, ‘ph’, ‘pl’, ‘pt’, ‘ro’, ‘rs’, ‘ru’, ‘sa’, ‘se’, ‘sg’, ‘si’, ‘sk’, ‘th’, ‘tr’, ‘tw’, ‘ua’, ‘us’, ‘ve’, ‘za’</p></li>
+<li><p><strong>clear_cache</strong> (<em>bool</em>) – When true, the cache will be cleared</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>Dictionary containing the retrieved sources</dt><dd><p>self.topHeadlineCache[‘status’] (str): ‘GOOD’ if the operation was completed successfully, ‘BAD’ if not</p>
+<p>self.topHeadlineCache[‘count’] (int): number of sources</p>
+<p>self.topHeadlineCache[‘articles’] (list): list of sources. Each entry is a dictionary with the following keys:</p>
+<blockquote>
+<div><p>’id’ (str): ID of the news source</p>
+<p>’name’ (str): Name of the news source</p>
+<p>’description’ (str): Short description of the news source</p>
+<p>’url’ (str): Link to the news source</p>
+<p>’category’ (str): Category of the news source</p>
+<p>’language’ (str): Language of the news source</p>
+<p>’country’ (str): Country of the news source</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>results (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.getNumberOfArticles">
+<span class="sig-name descname"><span class="pre">getNumberOfArticles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recompute_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/news.html#NewsSource.getNumberOfArticles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.getNumberOfArticles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a given amount of top headlines and stores them in a cache.
+The cache is refilled when ‘number’ is larger than the size of the current cache, or when ‘recompute_cache’ is true.
+In the case where ‘status’ is ‘BAD’, all the articles which were successfully saved in cache will be returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number</strong> (<em>int</em>) – amount of articles to return</p></li>
+<li><p><strong>recompute_cache</strong> (<em>bool</em>) – when true, the cache will be emptied before the query is made</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>Dictionary containing the result of the search query</dt><dd><p>self.topHeadlineCache[‘status’] (str): ‘GOOD’ if the search was completed successfully, ‘BAD’ if not</p>
+<p>self.topHeadlineCache[‘count’] (int): number of results</p>
+<p>self.topHeadlineCache[‘articles’] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</p>
+<blockquote>
+<div><p>’title’ (str): Title of the article</p>
+<p>’author’ (str): Author(s) of the article</p>
+<p>’source’ (str): Source of Article (ex: ‘BBC News’)</p>
+<p>’description’ (str): Short description of the article</p>
+<p>’url’ (str): Link to the article</p>
+<p>’imageurl’ (str): Link to the article’s image</p>
+<p>’published’ (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</p>
+<p>’content’ (str): First 200 characters max of the article’s content</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self.topHeadlineCache (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.searchByKeyWords">
+<span class="sig-name descname"><span class="pre">searchByKeyWords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/news.html#NewsSource.searchByKeyWords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.searchByKeyWords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for articles with a string of comma separated list of keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keywords</strong> (<em>str</em>) – comma separated list of keywords to search</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>Dictionary containing the result of the search query</dt><dd><p>self.topHeadlineCache[‘status’] (str): ‘GOOD’ if the search was completed successfully, ‘BAD’ if not</p>
+<p>self.topHeadlineCache[‘count’] (int): number of results</p>
+<p>self.topHeadlineCache[‘articles’] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</p>
+<blockquote>
+<div><p>’title’ (str): Title of the article</p>
+<p>’author’ (str): Author(s) of the article</p>
+<p>’source’ (str): Source of Article (ex: ‘BBC News’)</p>
+<p>’description’ (str): Short description of the article</p>
+<p>’url’ (str): Link to the article</p>
+<p>’imageurl’ (str): Link to the article’s image</p>
+<p>’published’ (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</p>
+<p>’content’ (str): First 200 characters max of the article’s content</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>results (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.news.NewsSource.searchByTitle">
+<span class="sig-name descname"><span class="pre">searchByTitle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/news.html#NewsSource.searchByTitle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.NewsSource.searchByTitle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for articles with a specific title</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>title</strong> (<em>str</em>) – title to search for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>Dictionary containing the result of the search query</dt><dd><p>self.topHeadlineCache[‘status’] (str): ‘GOOD’ if the search was completed successfully, ‘BAD’ if not</p>
+<p>self.topHeadlineCache[‘count’] (int): number of results</p>
+<p>self.topHeadlineCache[‘articles’] (list): list of the articles returned by the query. Each entry is a dictionary with the following keys:</p>
+<blockquote>
+<div><p>’title’ (str): Title of the article</p>
+<p>’author’ (str): Author(s) of the article</p>
+<p>’source’ (str): Source of Article (ex: ‘BBC News’)</p>
+<p>’description’ (str): Short description of the article</p>
+<p>’url’ (str): Link to the article</p>
+<p>’imageurl’ (str): Link to the article’s image</p>
+<p>’published’ (str): UTC time of publication (ex: 2022-05-25T14:09:59Z)</p>
+<p>’content’ (str): First 200 characters max of the article’s content</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>results (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.news.get_attribs_from_articles">
+<span class="sig-prename descclassname"><span class="pre">src.news.</span></span><span class="sig-name descname"><span class="pre">get_attribs_from_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/news.html#get_attribs_from_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.get_attribs_from_articles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used internally by NewsSource class</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.news.get_attribs_from_sources">
+<span class="sig-prename descclassname"><span class="pre">src.news.</span></span><span class="sig-name descname"><span class="pre">get_attribs_from_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/news.html#get_attribs_from_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.news.get_attribs_from_sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used internally by NewsSource class</p>
+</dd></dl>
+
+</section>
+<section id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">News API</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">src package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">src</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Giovanni Mascetti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/src.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

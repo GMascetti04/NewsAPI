@@ -1,0 +1,14 @@
+app/__pycache__
+app/venv
+app/key.txt
+src/__pycache__
+docs/_build
+docs/_static
+docs/_templates
+docs/conf.py
+docs/index.rst
+docs/make.bat
+docs/Makefile
+docs/modules.rst
+docs/src.rst
+src/__pycache__

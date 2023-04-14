@@ -1,0 +1,76 @@
+<div class="container">
+    <hr>
+    <h1>Search for Articles</h1>
+    <hr>
+
+    
+    <form action="http://localhost:5000/search/top_headline_count" method="POST">
+        <h2> Fetch Top Headlines </h2>
+        <div class="form-group">
+            <label for="Title">Count</label>
+            <input type="number" name="count" min = "1" oninput="validity.valid||(value='');" required>
+        </div>
+
+        
+        <button  type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <form action="http://localhost:5000/search/title" method="POST">
+        <h2> Search by Title </h2>
+        <div class="form-group">
+            <label for="Title">Title</label>
+            <input type="text" name="title"  required>
+        </div>
+
+        
+        <button  type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+    <form action="http://localhost:5000/search/keywords" method="POST">
+        <h2> Search by Keywords </h2>
+        <div class="form-group">
+            <label for="Keywords">Keywords</label>
+            <input type="text" name="keywords"  required>
+        </div>
+
+        
+        <button  type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <form action="http://localhost:5000/search/source" method="POST">
+        <h2> Search by Source </h2>
+        <div class="form-group">
+            <select id="source" name="source">
+                
+             
+            
+              </select>
+              <input type="submit">
+        </div>
+
+    </form>
+
+    <script>
+
+        const get_possible_sources = () =>  {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "http://localhost:5000/sources", false);
+            xhttp.send();
+            const sources = JSON.parse(xhttp.responseText).sources;
+            for (let source of sources) {
+                const x = `
+                <option value="${source.id}">${source.name}</option>
+                `;
+        
+                document.getElementById('source').innerHTML = document.getElementById('source').innerHTML + x;
+        
+            }  
+                 
+            
+        }
+        get_possible_sources()
+    </script>
+        
+       
+</div>
