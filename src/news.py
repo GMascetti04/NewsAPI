@@ -62,7 +62,7 @@ def get_attribs_from_sources(source_list : list) -> Dict[str, str]:
 
 
 class NewsSource:
-    """Class representing a newsource"""
+    """This class is used to encapsulate the News API functionality. Create an instance of this class with a valid News API key."""
 
     def __init__(self, key : str):
         """
