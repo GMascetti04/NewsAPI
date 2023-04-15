@@ -28,6 +28,7 @@ def fetch_top_headlines():
         articles = source.getNumberOfArticles(count)
         return render_template('results.html')
 
+
 @app.route("/search/title", methods = ['POST'])
 def search_by_title():
     if request.method == 'POST':
@@ -35,6 +36,7 @@ def search_by_title():
         global articles
         articles = source.searchByTitle(str(title))
         return render_template('results.html')
+
 
 @app.route("/search/keywords", methods = ['POST'])
 def search_by_keywords():
@@ -53,10 +55,10 @@ def search_by_source():
         articles = source.getArticlesFromSource(source_choice)
         return render_template('results.html')
 
+
 @app.route("/search", methods = ['GET'])
 def search():
     if request.method == 'GET':
-        print('get')
         return render_template('client.html')
 
 

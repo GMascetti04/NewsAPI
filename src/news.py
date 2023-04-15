@@ -7,9 +7,15 @@ import math
 
 
 
-def get_attribs_from_articles(article_list) -> Dict[str, str]:
+def get_attribs_from_articles(article_list : list) -> Dict[str, str]:
     """
-    Function used internally by NewsSource class
+    Function used internally by NewsSource class to convert a list of articles from the News API into correct format for this API.
+
+    Parameters:
+            article_list (list): list of News API articles
+    
+     Returns:
+            results (list): list of articles with their properties
     """
     results = []
     for article in article_list:
@@ -28,9 +34,15 @@ def get_attribs_from_articles(article_list) -> Dict[str, str]:
                 results[-1][field] = None
     return results
      
-def get_attribs_from_sources(source_list) -> Dict[str, str]:
+def get_attribs_from_sources(source_list : list) -> Dict[str, str]:
     """
     Function used internally by NewsSource class
+
+    Parameters:
+            source_list (list): list of News API sources
+    
+     Returns:
+            results (list): list of sources with their properties
     """
     results = []
     for article in source_list:
@@ -73,7 +85,7 @@ class NewsSource:
         return self.apikey 
     
     
-    def searchByKeyWords(self, keywords):
+    def searchByKeyWords(self, keywords : str) -> Dict[str, Any]:
         """
         Searches for articles with a string of comma separated list of keywords
         
@@ -81,7 +93,7 @@ class NewsSource:
                 keywords (str): comma separated list of keywords to search
 
         Returns:
-                results (dict): Dictionary containing the result of the search query
+                results (dict): Dictionary containing the result of the search query. For each field, the None object is present if the respective value does not exist.
                     self.topHeadlineCache['status'] (str): 'GOOD' if the search was completed successfully, 'BAD' if not
 
                     self.topHeadlineCache['count'] (int): number of results
@@ -113,7 +125,7 @@ class NewsSource:
             results = []
             if x['status'] == 'ok':
                 results = get_attribs_from_articles(x['articles'])
-            else: #there was an error at some point
+            else: 
                     return {'status' : 'BAD', 'count' : 0, 'articles': []}
             return {'status': 'GOOD', 'count': len(results), 'articles': results}
         except:
@@ -129,7 +141,7 @@ class NewsSource:
                 source_id (str): id of the news source to search from
 
         Returns:
-                results (dict): Dictionary containing the result of the search query
+                results (dict): Dictionary containing the result of the search query.For each field, the None object is present if the respective value does not exist.
                     self.topHeadlineCache['status'] (str): 'GOOD' if the search was completed successfully, 'BAD' if not
 
                     self.topHeadlineCache['count'] (int): number of results
@@ -159,14 +171,14 @@ class NewsSource:
             results = []
             if x['status'] == 'ok':
                 results = get_attribs_from_articles(x['articles'])
-            else: #there was an error at some point
+            else: 
                     return {'status' : 'BAD', 'count' : 0, 'articles': []}
             return {'status': 'GOOD', 'count': len(results), 'articles': results}
         except:
             return {'status' : 'BAD', 'count' : 0, 'articles': []}
 
     
-    def getNewsSources(self, category : str = "" , lang : str = "", country : str = "", clear_cache : bool = False):
+    def getNewsSources(self, category : str = "" , lang : str = "", country : str = "", clear_cache : bool = False) -> Dict[str, Any]:
         """
         Retrieves the possible news sources the NewsSource can pull from and stores them in a cache. 
         The cache is cleared if a new category, lang, or country is requested, or if 'clear_cache' is true
@@ -178,7 +190,7 @@ class NewsSource:
                 clear_cache (bool): When true, the cache will be cleared
 
         Returns:
-                results (dict): Dictionary containing the retrieved sources
+                results (dict): Dictionary containing the retrieved sources. For each field, the None object is present if the respective value does not exist.
                     self.topHeadlineCache['status'] (str): 'GOOD' if the operation was completed successfully, 'BAD' if not
 
                     self.topHeadlineCache['count'] (int): number of sources
@@ -231,7 +243,7 @@ class NewsSource:
         except:
             return {'status' : 'BAD', 'count' : 0, 'sources' : []}
 
-    def searchByTitle(self, title) -> Dict[str, str] :
+    def searchByTitle(self, title) -> Dict[str, str]:
         """
         Searches for articles with a specific title
         
@@ -239,7 +251,7 @@ class NewsSource:
                 title (str): title to search for
 
         Returns:
-                results (dict): Dictionary containing the result of the search query
+                results (dict): Dictionary containing the result of the search query. For each field, the None object is present if the respective value does not exist.
                     self.topHeadlineCache['status'] (str): 'GOOD' if the search was completed successfully, 'BAD' if not
 
                     self.topHeadlineCache['count'] (int): number of results
@@ -268,7 +280,7 @@ class NewsSource:
             results = []
             if x['status'] == 'ok':
                 results = get_attribs_from_articles(x['articles'])
-            else: #there was an error at some point
+            else: 
                     return {'status' : 'BAD', 'count' : 0, 'articles': []}
             return {'status': 'GOOD', 'count' : len(results), 'articles': results}
         except:
@@ -287,7 +299,7 @@ class NewsSource:
                 recompute_cache (bool): when true, the cache will be emptied before the query is made
 
         Returns:
-                self.topHeadlineCache (dict): Dictionary containing the result of the search query 
+                self.topHeadlineCache (dict): Dictionary containing the result of the search query. For each field, the None object is present if the respective value does not exist.
                     self.topHeadlineCache['status'] (str): 'GOOD' if the search was completed successfully, 'BAD' if not
 
                     self.topHeadlineCache['count'] (int): number of results
@@ -326,7 +338,7 @@ class NewsSource:
                 x =  json.loads(urllib.request.urlopen("https://newsapi.org/v2/top-headlines?country=us&pageSize=100&page="+str(i) +"&apiKey="+self.apikey).read().decode("utf-8"))
                 if x['status'] == 'ok':
                     results.extend(get_attribs_from_articles(x['articles']))
-                else: #there was an error at some point
+                else:
                     self.topHeadlineCache = results
                     return {'status' : 'BAD', 'count' : min(number, len(results)), 'articles': self.topHeadlineCache[0 : min(number, len(results))]}
             except:

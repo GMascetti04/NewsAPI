@@ -62,6 +62,15 @@
 
 
 <script>
+
+const months = ["January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"];
+
+function convertMonth(m) {
+    var num = parseInt(m);
+    return months[num-1];
+}
+
 const load_results = () =>  {
     const xhttp = new XMLHttpRequest();
     xhttp.open("GET", "http://localhost:5000/results", false);
@@ -79,7 +88,12 @@ const load_results = () =>  {
             document.getElementById('articles').innerHTML += `<h5 class="card-title">${article.title}</h5>`
                         
         if (article.author != null)
-        document.getElementById('articles').innerHTML += `<h6 class="card-subtitle mb-2 text-muted">${article.author}</h6>`
+            document.getElementById('articles').innerHTML += `<h6 class="card-subtitle mb-2 text-muted">${article.author}</h6>`
+
+        if(article.published != null) {
+            document.getElementById('articles').innerHTML += 
+                `<h6 class="card-subtitle mb-2 text-muted">${convertMonth(article.published.substr(5,2)) + " " + article.published.substr(8,2) + ", " + article.published.substr(0,4)}</h6>`
+        }
 
         if(article.imageurl != null)
             document.getElementById('articles').innerHTML += `<img src="${article.imageurl}" alt="${article.imageurl}" style=
