@@ -1,4 +1,4 @@
-# LBInews
+# NewsAPI
 
 A simple news api wrapper for the [News API](https://newsapi.org/) in python
 
